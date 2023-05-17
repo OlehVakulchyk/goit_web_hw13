@@ -7,17 +7,18 @@ from goit_web_hw13.schemas import ContactModel
 
 NEXT_DAYS = 7
 
-async def get_users(limit: int, offset: int, db: Session, user: User):
+
+async def get_contacts(limit: int, offset: int, db: Session, user: User):
     contacts = db.query(UserContact).filter_by(user_id=user.id).limit(limit).offset(offset)
     return contacts.all()
 
 
-async def get_user_by_id(contact_id: int, db: Session, user: User):
+async def get_contact_by_id(contact_id: int, db: Session, user: User):
     contact = db.query(UserContact).filter(and_(UserContact.user_id==user.id, UserContact.id==contact_id)).first()
     return contact
 
 
-async def get_search_users(limit: int, offset: int, 
+async def get_search_contacts(limit: int, offset: int,
                             db: Session, user: User,
                             contact_name: str | None = None, 
                             contact_surname: str | None = None
@@ -30,7 +31,7 @@ async def get_search_users(limit: int, offset: int,
     return contacts.limit(limit).offset(offset).all()
 
 
-async def get_users_by_bithday(limit: int, offset: int, db: Session, user: User):
+async def get_contacts_by_bithday(limit: int, offset: int, db: Session, user: User):
     current_datetime = datetime.now().date()
     date_end_bithdays = current_datetime + timedelta(days = NEXT_DAYS)
     contacts = db.query(UserContact).filter_by(user_id=user.id).limit(limit).offset(offset).all()
@@ -47,9 +48,9 @@ async def get_users_by_bithday(limit: int, offset: int, db: Session, user: User)
     return contacts_bithdays
 
 
-
-async def get_users_by_email(user_email: str, db: Session, user: User):
-    contact = db.query(UserContact).filter(and_(UserContact.user_id==user.id, UserContact.email==user_email)).first()
+async def get_contacts_by_email(contact_email: str, db: Session, user: User):
+    contact = db.query(UserContact).filter(
+        and_(UserContact.user_id == user.id, UserContact.email == contact_email)).first()
     return contact
 
 
@@ -61,8 +62,8 @@ async def create(body: ContactModel, db: Session, user: User):
     return contact
 
 
-async def update(user_id: int, body: ContactModel, db: Session, user: User):
-    contact = await get_user_by_id(user_id, db, user)
+async def update(id: int, body: ContactModel, db: Session, user: User):
+    contact = await get_contact_by_id(id, db, user)
     if contact:
         contact.name = body.name
         contact.surname = body.surname
@@ -75,8 +76,8 @@ async def update(user_id: int, body: ContactModel, db: Session, user: User):
     return contact
 
 
-async def remove(user_id: int, db: Session, user: User):
-    contact = await get_user_by_id(user_id, db, user)
+async def remove(id: int, db: Session, user: User):
+    contact = await get_contact_by_id(id, db, user)
     if contact:
         db.delete(contact)
         db.commit()

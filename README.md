@@ -7,6 +7,7 @@
    and created BD web_hw11
 3. # Setting up the alembic package
    alembic init alembic
+   alembic revision --autogenerate -m 'Init'
    alembic upgrade head
 4. # (optional)
    py goit_web_hw13/database/seeds.py
@@ -15,10 +16,4 @@
 6. uvicorn main:app --host localhost --port 8000 --reload
 7. http://127.0.0.1:8000/docs
 
-# В базі наявні 3 users та більше 50 контактів
 
-# user pasword
-
-taras@example.com taras09
-olena@example.com olena11
-olaf@example.com viking

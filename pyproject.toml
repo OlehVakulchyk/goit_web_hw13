@@ -20,6 +20,7 @@ python-multipart = "^0.0.6"
 libgravatar = "^1.0.4"
 faker = "^18.7.0"
 fastapi-mail = "^1.2.8"
+python-dotenv = "^1.0.0"
 
 
 [build-system]
