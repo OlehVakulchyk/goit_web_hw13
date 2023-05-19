@@ -1,6 +1,6 @@
 # goit_web_hw13
+# verification and password reset
 
-# JSON Web Token
 
 1. poetry shell
 2. start docker container with postgres SQL
