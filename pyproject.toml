@@ -21,6 +21,8 @@ libgravatar = "^1.0.4"
 faker = "^18.7.0"
 fastapi-mail = "^1.2.8"
 python-dotenv = "^1.0.0"
+redis = "^4.5.5"
+fastapi-limiter = "^0.1.5"
 
 
 [build-system]

@@ -1,6 +1,7 @@
 from typing import Annotated
 from pydantic import EmailStr
 from fastapi import APIRouter, Depends, HTTPException, Path, status, Query
+from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.orm import Session
 
 from goit_web_hw13.database.db import get_db
@@ -12,7 +13,13 @@ from goit_web_hw13.services.auth import auth_service
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
 
-@router.get("/", response_model=list[ContactResponse])
+@router.get("/", response_model=list[ContactResponse],
+            description='No more than 2 requests per 10 seconds and 10 requests per minute',
+            dependencies=[
+                Depends(RateLimiter(times=2, seconds=10)),
+                Depends(RateLimiter(times=10, seconds=60))
+                ]
+            )
 async def get_contacts(limit: int = Query(10, le=300), offset: int = 0, 
                     db: Session = Depends(get_db), 
                     user: User = Depends(auth_service.get_current_user)):
@@ -20,7 +27,13 @@ async def get_contacts(limit: int = Query(10, le=300), offset: int = 0,
     return contacts
 
 
-@router.get("/{contact_id}", response_model=ContactResponse)
+@router.get("/{contact_id}", response_model=ContactResponse,
+            description='No more than 2 requests per 10 seconds and 10 requests per minute',
+            dependencies=[
+                Depends(RateLimiter(times=2, seconds=10)),
+                Depends(RateLimiter(times=10, seconds=60))
+                ]
+            )
 async def get_contact(contact_id: int = Path(ge=1),
                    db: Session = Depends(get_db),
                    user: User = Depends(auth_service.get_current_user)):
@@ -31,7 +44,13 @@ async def get_contact(contact_id: int = Path(ge=1),
     return contact
 
 
-@router.get("/search_contacts/", response_model=list[ContactResponse])
+@router.get("/search_contacts/", response_model=list[ContactResponse],
+            description='No more than 2 requests per 10 seconds and 10 requests per minute',
+            dependencies=[
+                Depends(RateLimiter(times=2, seconds=10)),
+                Depends(RateLimiter(times=10, seconds=60))
+                ]
+            )
 async def search_contacts(limit: Annotated[int, Query(le=50)] = 10, 
                             offset: int = 0, 
                             db: Session = Depends(get_db),
@@ -53,7 +72,13 @@ async def search_contacts(limit: Annotated[int, Query(le=50)] = 10,
     return contacts
 
 
-@router.get("/contacts_by_email/", response_model=ContactResponse)
+@router.get("/contacts_by_email/", response_model=ContactResponse,
+            description='No more than 2 requests per 10 seconds and 10 requests per minute',
+            dependencies=[
+                Depends(RateLimiter(times=2, seconds=10)),
+                Depends(RateLimiter(times=10, seconds=60))
+                ]
+            )
 async def get_contacts_by_email(contact_email: EmailStr,
                             db: Session = Depends(get_db),
                             user: User = Depends(auth_service.get_current_user)):
@@ -64,14 +89,20 @@ async def get_contacts_by_email(contact_email: EmailStr,
     return contact
 
 
-@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ContactResponse, 
+             description='No more than 10 contacts per minute',
+             dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+             status_code=status.HTTP_201_CREATED)
 async def create_contact(body: ContactModel, db: Session = Depends(get_db),
                       user: User = Depends(auth_service.get_current_user)):
     contact = await repository_contacts.create(body, db, user)
     return contact
 
 
-@router.put("/{contact_id}", response_model=ContactResponse)
+@router.put("/{contact_id}", response_model=ContactResponse,
+            description='No more 10 requests per minute',
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))]
+            )
 async def update_contact(body: ContactModel, contact_id: int = Path(ge=1),
                       db: Session = Depends(get_db),
                       user: User = Depends(auth_service.get_current_user)):
@@ -94,7 +125,13 @@ async def delete_contact(contact_id: int = Path(ge=1),
 
 
 @router.get("/bithday_next_days/", 
-            response_model=list[ContactResponse])
+            response_model=list[ContactResponse],
+            description='No more than 2 requests per 10 seconds and 10 requests per minute',
+            dependencies=[
+                Depends(RateLimiter(times=2, seconds=10)),
+                Depends(RateLimiter(times=10, seconds=60))
+                ]
+            )
 async def get_contacts_by_bithday(limit: int = Query(10, le=300), 
                                offset: int = 0, 
                                db: Session = Depends(get_db),

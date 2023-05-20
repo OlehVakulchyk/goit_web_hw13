@@ -6,7 +6,7 @@
 2. start docker container with postgres SQL
    and created BD web_hw11
 3. # Setting up the alembic package
-   alembic init alembic
+   alembic init migrations
    alembic revision --autogenerate -m 'Init'
    alembic upgrade head
 4. # (optional)
