@@ -23,6 +23,8 @@ fastapi-mail = "^1.2.8"
 python-dotenv = "^1.0.0"
 redis = "^4.5.5"
 fastapi-limiter = "^0.1.5"
+git-filter-repo = "^2.38.0"
+cloudinary = "^1.33.0"
 
 
 [build-system]

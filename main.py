@@ -8,13 +8,15 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from goit_web_hw13.database.db import get_db
-from goit_web_hw13.routes import users, auth
+from goit_web_hw13.routes import users, auth, users_avatar
 from goit_web_hw13.conf.config import settings
 
 app = FastAPI()
 
 app.include_router(auth.router, prefix='/api')
+app.include_router(users_avatar.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
+
 
 origins = ["*"]
 
